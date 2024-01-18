@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/views/home_view.dart';
 import 'package:mynotes/views/login_view.dart';
+import 'package:mynotes/views/notes_view.dart';
 import 'package:mynotes/views/register_view.dart';
+import 'package:mynotes/views/verify_email_view.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,8 +16,10 @@ void main() {
       ),
       home: const HomeView(),
       routes: {
-        '/Register/':(context) => const RegisterView(),
-        '/Login/':(context) => const LoginView()
+        registerRoute:(context) => const RegisterView(),
+        loginRoute:(context) => const LoginView(),
+        notesRoute:(context) => const NotesView(),
+        verifyEmailRoute:(context) => const VerifyEmailView(),
       },
     ));
 }
