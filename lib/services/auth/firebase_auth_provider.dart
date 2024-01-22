@@ -1,4 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart' show FirebaseAuth,FirebaseAuthException;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:mynotes/firebase_options.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/auth_provider.dart';
 import 'package:mynotes/services/auth/auth_user.dart';
@@ -16,22 +18,21 @@ class FirebaseAuthProvider implements AuthProvider{
       }
     }on FirebaseAuthException catch(e){
       if (e.code == "weak-password")
-        {throw WeakPasswordException;}
+        {throw WeakPasswordException();}
       else if(e.code == "email-already-in-use")
-        {throw EmailAlreadyInUseException;}
+        {throw EmailAlreadyInUseException();}
       else if(e.code == "invalid-email"){
-        throw InvalidEmailException;
+        throw InvalidEmailException();
       }
       else{
-        throw GenericException;
+        throw GenericException();
       }
     }catch(e){
-      throw GenericException;
+      throw GenericException();
     }
   }
 
   @override
-  // TODO: implement currentUser
   AuthUser? get currentUser {
     final currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser!=null){
@@ -85,6 +86,13 @@ class FirebaseAuthProvider implements AuthProvider{
     }else{
       throw UserNotLoggedInException();
     }
+  }
+  
+  @override
+  Future<void> initialize() async {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
   
 }

@@ -1,8 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/firebase_options.dart';
+import 'package:mynotes/services/auth/auth_exceptions.dart';
+import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/utils/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -63,27 +63,24 @@ class _LoginViewState extends State<LoginView> {
               final email = _email.text;
               final password = _password.text;
               try {
-                await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password,);
-                final currentUser = FirebaseAuth.instance.currentUser;
+                await AuthService.firebase().login(email: email, password: password);
+                final currentUser = AuthService.firebase().currentUser;
 
-                if (currentUser?.emailVerified ?? false){
+                if (currentUser?.isEmailVerified ?? false){
                   Navigator.of(context).pushNamedAndRemoveUntil(notesRoute, (route) => false,);
                 }else{
                   Navigator.of(context).pushNamedAndRemoveUntil(verifyEmailRoute, (route) => false,);
                 }
                 
-              } on FirebaseAuthException catch (e) {
-                if (e.code == "user-not-found"){
+              } on UserNotFoundException {
                   await showErrorDialog(context, "User Not Found");
-                }
-                else if(e.code == "wrong-password"){
-                    await showErrorDialog(context, "Incorrect Password");
-                  }
-                  else{
-                    await showErrorDialog(context, e.code);
-                  }
-              }catch(e){
-                await showErrorDialog(context, e.toString());
+              } on WrongPasswordException{
+                  await showErrorDialog(context, "Incorrect Password");
+              } on InvalidCredentialsException{
+                await showErrorDialog(context, "Invalid Credentials");
+              
+              }on GenericException{
+                await showErrorDialog(context, "Cannot LogIn");
               }     
             },
             child: const Text("Login")),
