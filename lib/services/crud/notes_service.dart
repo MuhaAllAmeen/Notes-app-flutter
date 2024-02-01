@@ -46,7 +46,6 @@ class NotesService{
       final docsPath = await getApplicationDocumentsDirectory();
       final dbPath = join(docsPath.path,dbName);
       final db = await openDatabase(dbPath);
-
       await db.execute(createTableUser);
       await db.execute(createTableNotes);
       await _cachNotes();
