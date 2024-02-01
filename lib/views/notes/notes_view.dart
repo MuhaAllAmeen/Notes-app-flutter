@@ -19,7 +19,7 @@ class _NotesViewState extends State<NotesView> {
   @override
   void initState() {
     _notesService = NotesService();
-    // _notesService.open();
+    _notesService.open();
     super.initState();
   }
 
@@ -36,6 +36,8 @@ class _NotesViewState extends State<NotesView> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         actions: [
+          IconButton(onPressed: (){Navigator.of(context).pushNamed(newNoteRoute);},
+           icon: const Icon(Icons.add)),
           PopupMenuButton<MenuAction>(
             onSelected: (value) async {
               switch (value){

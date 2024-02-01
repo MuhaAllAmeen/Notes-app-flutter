@@ -59,7 +59,7 @@ class NotesService{
     final db = _db;
     if (db!=null){
       await db.close();
-      _db =null;
+      _db = null;
     }else{
       throw DatabaseNotOpenException();
     }
