@@ -23,11 +23,11 @@ class _NotesViewState extends State<NotesView> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    _notesService.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   _notesService.close();
+  //   super.dispose();
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,17 +57,35 @@ class _NotesViewState extends State<NotesView> {
             )
         ],
       ),
-      body: FutureBuilder(future: _notesService.getOrCreateUser(email: userEmail), 
+      body: 
+      FutureBuilder(future: _notesService.getOrCreateUser(email: userEmail), 
         builder:(context, snapshot) {
           switch(snapshot.connectionState){       
             case ConnectionState.done:
               return  StreamBuilder(stream: _notesService.allNotes, 
                 builder:(context, snapshot) {
-                  switch(snapshot.connectionState){              
+                  switch(snapshot.connectionState){  
                     case ConnectionState.waiting:
-                      return const Text("waiting");
+                    case ConnectionState.active: 
+                      if (snapshot.hasData){
+                        final allNotes = snapshot.data as List<DatabaseNotes>;
+                        return ListView.builder(itemCount: allNotes.length,
+                         itemBuilder:(context, index) {
+                           final note = allNotes[index];
+                           return ListTile(
+                            title: Text(
+                              note.note,
+                              maxLines: 1,
+                              softWrap: true,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                           );
+                         },);
+                      }else{
+                        return const CircularProgressIndicator();
+                      }
                     default:
-                      return CircularProgressIndicator();
+                      return const CircularProgressIndicator();
                   }
                 },
               );

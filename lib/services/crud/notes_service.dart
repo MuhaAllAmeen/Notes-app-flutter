@@ -11,15 +11,21 @@ class NotesService{
   Database? _db;
 
   List<DatabaseNotes> _notes = [];
-  final _notesStreamController = StreamController<List<DatabaseNotes>>.broadcast();
+  late final StreamController<List<DatabaseNotes>> _notesStreamController;
   Stream<List<DatabaseNotes>> get allNotes => _notesStreamController.stream;
 
   //making it a singleton
   static final NotesService _shared = NotesService._sharedInstance();
-  NotesService._sharedInstance();
+  NotesService._sharedInstance(){
+    _notesStreamController = StreamController<List<DatabaseNotes>>.broadcast(
+      onListen: (){
+        _notesStreamController.sink.add(_notes);
+      }
+    );
+  }
   factory NotesService() => _shared;
 
-  Future<void> _cachNotes() async{
+  Future<void> _cacheNotes() async{
     final allNotes = await getAllNotes();
     _notes = allNotes.toList();
     _notesStreamController.add(_notes);
@@ -33,6 +39,7 @@ class NotesService{
       final createdUser = await createUser(email: email);
       return createdUser;
     } catch(e){
+      print("exception3 $e");
       rethrow;
     }
   }
@@ -46,11 +53,14 @@ class NotesService{
       final docsPath = await getApplicationDocumentsDirectory();
       final dbPath = join(docsPath.path,dbName);
       final db = await openDatabase(dbPath);
+      _db = db;
       await db.execute(createTableUser);
       await db.execute(createTableNotes);
-      await _cachNotes();
+      await _cacheNotes();
     } on MissingPlatformDirectoryException{
       throw UnableToGetDocumentsDirectory();
+    } catch(e){
+      print ('Exception2 $e');
     }
   }
 
@@ -68,7 +78,9 @@ class NotesService{
     try{
       await open();
     } on DatabaseAlreadyOpenedException{
-
+      print('Database Already opened');
+    }catch(e){
+      print('exception5 $e');
     }
   }
 
@@ -103,6 +115,7 @@ class NotesService{
   }
 
   Future<DatabaseUser> getUser ({required String email}) async{
+    try{
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final createQuery = await db.query('user',where: 'email = ?',whereArgs: [email.toLowerCase()],limit: 1);
@@ -110,6 +123,10 @@ class NotesService{
       throw UserNotExistException();
     }else{
       return DatabaseUser.fromRow(createQuery.first);
+    }
+    }catch (e){
+      print('exception4 $e');
+      rethrow;
     }
   }
 
@@ -155,6 +172,7 @@ class NotesService{
   }
 
   Future<DatabaseNotes> getNote({required int id}) async{
+
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final notes = await db.query('notes', limit: 1, where: 'id = ?',whereArgs: [id]);
@@ -190,7 +208,7 @@ class NotesService{
     }else{
       final updatedNote =  await getNote(id: note.id);
       _notes.removeWhere((note) => note.id==updatedNote.id);
-      _notes.add(note);
+      _notes.add(updatedNote);
       _notesStreamController.add(_notes);
       return updatedNote;
     }
@@ -236,13 +254,13 @@ class DatabaseNotes{
 }
 
 const dbName = 'notes.db';
-const createTableUser = '''CREATE TABLE "user" (
+const createTableUser = '''CREATE TABLE IF NOT EXISTS "user" (
 	"id"	INTEGER NOT NULL,
 	"email"	TEXT NOT NULL UNIQUE,
 	PRIMARY KEY("id" AUTOINCREMENT)
 );''';
 
-const createTableNotes = '''CREATE TABLE "notes" (
+const createTableNotes = '''CREATE TABLE IF NOT EXISTS "notes" (
 	"id"	INTEGER NOT NULL,
 	"note"	TEXT,
 	"synced_with_cloud"	INTEGER NOT NULL,
