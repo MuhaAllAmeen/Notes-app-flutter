@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:mynotes/extensions/list/filter.dart';
 import 'package:mynotes/services/crud/crud_exceptions.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -10,9 +11,19 @@ import 'package:sqflite/sqflite.dart';
 class NotesService{
   Database? _db;
 
+  DatabaseUser? _user;
+
   List<DatabaseNotes> _notes = [];
   late final StreamController<List<DatabaseNotes>> _notesStreamController;
-  Stream<List<DatabaseNotes>> get allNotes => _notesStreamController.stream;
+  Stream<List<DatabaseNotes>> get allNotes => 
+    _notesStreamController.stream.filter((note){
+      final currenUser = _user;
+      if (currenUser!=null){
+        return note.userId == currenUser.id;
+      }else{
+        throw UserShouldBeSetBeforeReadingAllNotesException();
+      }
+    });
 
   //making it a singleton
   static final NotesService _shared = NotesService._sharedInstance();
@@ -31,12 +42,18 @@ class NotesService{
     _notesStreamController.add(_notes);
   }
 
-  Future<DatabaseUser> getOrCreateUser({required String email}) async {
+  Future<DatabaseUser> getOrCreateUser({required String email, bool setAsCurrentUser = true}) async {
     try{
       final user = await getUser(email: email);
+      if (setAsCurrentUser){
+        _user = user;
+      }
       return user;
     } on UserNotExistException{
       final createdUser = await createUser(email: email);
+      if (setAsCurrentUser){
+        _user = createdUser;
+      }
       return createdUser;
     } catch(e){
       print("exception3 $e");
