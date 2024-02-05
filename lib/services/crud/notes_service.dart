@@ -202,7 +202,7 @@ class NotesService{
     final updatesCount = await db.update('notes',{
       'note':text,
       'synced_with_cloud':0
-    });
+    },where: 'id = ?',whereArgs: [note.id]);
     if (updatesCount == 0){
       throw CouldNotUpdateNoteException();
     }else{
