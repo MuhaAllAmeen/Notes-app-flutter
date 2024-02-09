@@ -23,10 +23,6 @@ void main() {
       child:const HomeView(),
     ),
     routes: {
-      registerRoute: (context) => const RegisterView(),
-      loginRoute: (context) => const LoginView(),
-      notesRoute: (context) => const NotesView(),
-      verifyEmailRoute: (context) => const VerifyEmailView(),
       createUpdateNoteRoute: (context) => const CreateUpdateNoteView(),
     },
   ));
