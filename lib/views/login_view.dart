@@ -4,6 +4,7 @@ import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
+import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utils/dialogs/error_dialog.dart';
 
 class LoginView extends StatefulWidget {
@@ -46,44 +47,47 @@ class _LoginViewState extends State<LoginView> {
             autocorrect: false,
             enableSuggestions: false,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              hintText: "Email"
-            ),
+            decoration: const InputDecoration(hintText: "Email"),
           ),
           TextField(
             controller: _password,
             obscureText: true,
             autocorrect: false,
             enableSuggestions: false,
-            decoration: const InputDecoration(
-              hintText: "Password"
-            ),
+            decoration: const InputDecoration(hintText: "Password"),
+          ),
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) async {
+              if(state is AuthStateLoggedOut){
+                if(state.exception is UserNotFoundException){
+                    await showErrorDialog(context, "User Not Found");
+                } else if (state.exception is WrongPasswordException){
+                    await showErrorDialog(context, "Incorrect Password");
+                } else if (state.exception is InvalidCredentialsException){
+                    await showErrorDialog(context, "Invalid Credentials");
+                }else if (state.exception is GenericException){
+                    await showErrorDialog(context, "Cannot LogIn");
+                }
+              }
+            },
+            child: TextButton(
+                onPressed: () async {
+                  final email = _email.text;
+                  final password = _password.text;
+                  context
+                        .read<AuthBloc>()
+                        .add(AuthEventLogIn(email, password));
+                },
+                child: const Text("Login")),
           ),
           TextButton(
-            onPressed: () async {
-              final email = _email.text;
-              final password = _password.text;
-              try {
-                context.read<AuthBloc>().add(AuthEventLogIn(email, password));        
-              } on UserNotFoundException {
-                  await showErrorDialog(context, "User Not Found");
-              } on WrongPasswordException{
-                  await showErrorDialog(context, "Incorrect Password");
-              } on InvalidCredentialsException{
-                await showErrorDialog(context, "Invalid Credentials");
-              
-              }on GenericException{
-                await showErrorDialog(context, "Cannot LogIn");
-              }     
-            },
-            child: const Text("Login")),
-            TextButton(onPressed: (){
-              Navigator.of(context).pushNamedAndRemoveUntil(registerRoute,
-              (route) => false);
-            },
-             child: const Text("New User? Register Here"))
+              onPressed: () {
+                Navigator.of(context)
+                    .pushNamedAndRemoveUntil(registerRoute, (route) => false);
+              },
+              child: const Text("New User? Register Here"))
         ],
       ),
     );
-  } 
+  }
 }
