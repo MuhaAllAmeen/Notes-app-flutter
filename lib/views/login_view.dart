@@ -55,42 +55,50 @@ class _LoginViewState extends State<LoginView> {
           backgroundColor: Colors.black,
           foregroundColor: Colors.white,
         ),
-        body: Column(
-          children: [
-            TextField(
-              controller: _email,
-              autocorrect: false,
-              enableSuggestions: false,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(hintText: "Email"),
-            ),
-            TextField(
-              controller: _password,
-              obscureText: true,
-              autocorrect: false,
-              enableSuggestions: false,
-              decoration: const InputDecoration(hintText: "Password"),
-            ),
-            BlocListener<AuthBloc, AuthState>(
-              listener: (context, state) async {
-                
-              },
-              child: TextButton(
-                  onPressed: () async {
-                    final email = _email.text;
-                    final password = _password.text;
-                    context
-                        .read<AuthBloc>()
-                        .add(AuthEventLogIn(email, password));
-                  },
-                  child: const Text("Login")),
-            ),
-            TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(const AuthEventShouldRegister());
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              TextField(
+                controller: _email,
+                autocorrect: false,
+                enableSuggestions: false,
+                keyboardType: TextInputType.emailAddress,
+                decoration: const InputDecoration(hintText: "Email"),
+              ),
+              TextField(
+                controller: _password,
+                obscureText: true,
+                autocorrect: false,
+                enableSuggestions: false,
+                decoration: const InputDecoration(hintText: "Password"),
+              ),
+              BlocListener<AuthBloc, AuthState>(
+                listener: (context, state) async {
+                  
                 },
-                child: const Text("New User? Register Here"))
-          ],
+                child: TextButton(
+                    onPressed: () async {
+                      final email = _email.text;
+                      final password = _password.text;
+                      context
+                          .read<AuthBloc>()
+                          .add(AuthEventLogIn(email, password));
+                    },
+                    child: const Text("Login")),
+              ),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthEventShouldRegister());
+                  },
+                  child: const Text("New User? Register Here")),
+              TextButton(
+                  onPressed: () {
+                    context.read<AuthBloc>().add(const AuthEventForgotPassword(null));
+                  },
+                  child: const Text("Forgot Password"))
+            ],
+          ),
         ),
       ),
     );

@@ -54,7 +54,7 @@ class LoadingScreen{
         ),
       );
     },);
-    state?.insert(overlay);
+    state.insert(overlay);
     return LoadingScreenController(close:() {
       _text.close();
       overlay.remove();
@@ -66,7 +66,7 @@ class LoadingScreen{
   }
   
   void hide(){
-    controller?.close; 
+    controller?.close(); 
     controller = null;
   }
 

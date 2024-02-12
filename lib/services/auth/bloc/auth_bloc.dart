@@ -20,6 +20,9 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
         emit(AuthStateRegistering(exception:e,isLoading: false));
       }
     },);
+    on<AuthEventShouldRegister>((event, emit) {
+      emit(const AuthStateRegistering(exception: null, isLoading: false));
+    },);
     on<AuthEventInitialize>((event, emit) async{
       await provider.initialize();
       final user = provider.currentUser;
@@ -32,7 +35,7 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
       }
     });
     on<AuthEventLogIn>((event, emit) async{
-      emit(const AuthStateLoggedOut(exception: null,isLoading:true,loadingText: 'Please wait while I log you out'));
+      emit(const AuthStateLoggedOut(exception: null,isLoading:true,loadingText: 'Please wait while I log you in'));
       final email = event.email;
       final password = event.password;
       try{
@@ -46,6 +49,8 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
         }
         emit(AuthStateLoggedIn(user:user, isLoading: false));
       }on Exception catch(e){
+        
+        print('exception $e');
         emit(AuthStateLoggedOut(exception:e,isLoading: false));
       }
     });
@@ -57,5 +62,26 @@ class AuthBloc extends Bloc<AuthEvent,AuthState>{
         emit(AuthStateLoggedOut(exception: e,isLoading: false));
       }    
     });
+
+    on<AuthEventForgotPassword>((event, emit) async{
+      emit(const AuthStateForgotPassword(isLoading: false, exception: null, hasSentEmail: false));
+      final email = event.email;
+      if(email == null){
+        return;
+      }
+      emit(const AuthStateForgotPassword(isLoading: true, exception: null, hasSentEmail: false));
+      bool didSendEmail;
+      Exception? exception;
+      try{
+        await provider.sendPasswordReset(toEmail: email);
+        didSendEmail = true;
+        exception = null;
+      } on Exception catch(e){
+        didSendEmail = false;
+        exception = e;
+      }
+      emit(AuthStateForgotPassword(isLoading: false, exception: exception, hasSentEmail: didSendEmail));
+
+    },);
   }
 }
