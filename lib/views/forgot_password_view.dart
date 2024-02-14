@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mynotes/design/box/frosted_glass.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
@@ -40,33 +41,61 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           }
         }
     }, child: Scaffold(
-      appBar: AppBar(
-        title: const Text("Reset Password"),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-      ),
+      backgroundColor: Colors.black,
       body:  Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Text('Enter your email to reset your password'),
-            TextField(
-              keyboardType: TextInputType.emailAddress,
-              autocorrect: false,
-              autofocus: true,
-              controller: _controller,
-              decoration: const InputDecoration(
-                hintText: 'Enter Email Address'
+        padding: const EdgeInsets.only(top:80.0),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding:  EdgeInsets.only(left:25.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                     Text('Enter your email to', style: TextStyle(color: Colors.white30,fontSize: 30,)),
+                     Text('Reset your Password',style: TextStyle(color: Colors.white,fontSize: 45),)
+                  ],
+                ),
               ),
-            ),
-            TextButton(onPressed:() {
-              final email = _controller.text;
-              context.read<AuthBloc>().add(AuthEventForgotPassword(email));
-            }, child: const Text("Send Password Reset Link")),
-            TextButton(onPressed:() {
-              context.read<AuthBloc>().add(const AuthEventLogOut());
-            }, child: const Text('Back to Login Page'))
-          ],
+              Padding(
+                padding: const EdgeInsets.only(top:60.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      FrostedGlassBox(
+                        theWidth: 350.0,
+                        theHeight: 100.0,
+                        theChild: TextField(
+                          keyboardType: TextInputType.emailAddress,
+                          autocorrect: false,
+                          style: const TextStyle(color: Colors.white),
+                          autofocus: true,
+                          controller: _controller,
+                          decoration: const InputDecoration(hintText: "Enter Email Address",hintStyle: TextStyle(color: Colors.white70)),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top:25.0),
+                        child: Column(
+                          children: [
+                            TextButton(onPressed:() {
+                              final email = _controller.text;
+                              context.read<AuthBloc>().add(AuthEventForgotPassword(email));
+                            }, child: const Text("Send Password Reset Link",style: TextStyle(color: Colors.white,fontSize: 20))),
+                            TextButton(onPressed:() {
+                              context.read<AuthBloc>().add(const AuthEventLogOut());
+                            }, child: const Text('Back to Login Page',style: TextStyle(color: Colors.white,fontSize: 20)))
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+            ],
+          ),
         ),
       ),
     ),

@@ -16,22 +16,45 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Verify Email"),
-        backgroundColor: Colors.black,
-        foregroundColor: Colors.white,
-      ),
-      body: Column(
-          children: [const Text("A verification Email has been sent"),
-          const Text("Press the button to send the link again"),
-          TextButton(onPressed: () async{
-            context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
-          }, 
-          child: const Text("Verify")),
-          TextButton(onPressed: () {
-            context.read<AuthBloc>().add(const AuthEventLogOut());
-          }, child: const Text("Restart"))],
+      backgroundColor: Colors.black,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top:80.0),
+          child: 
+            Padding(
+              padding: const EdgeInsets.only(left:25.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: 
+                [
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                       Text("A verification Email has been sent", style: TextStyle(color: Colors.white30,fontSize: 30,),),
+                       Text("Press the button \nto send the \nlink again",style: TextStyle(color: Colors.white,fontSize: 45)),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top:60.0),
+                    child: Center(
+                      child: Column(
+                        children: [
+                          TextButton(onPressed: () async{
+                            context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
+                          }, 
+                          child: const Text("Verify",style: TextStyle(color: Colors.white,fontSize: 20),)),
+                          TextButton(onPressed: () {
+                            context.read<AuthBloc>().add(const AuthEventLogOut());
+                          }, child: const Text("Restart",style: TextStyle(color: Colors.white,fontSize: 20),))
+                        ],
+                      ),
+                    ),
+                  ),     
+                ],
+              ),
+            ),
         ),
+      ),
     );    
   }
 }

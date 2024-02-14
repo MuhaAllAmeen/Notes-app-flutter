@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
@@ -8,6 +9,7 @@ import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/firebase_cloud_storage.dart';
 // import 'package:mynotes/services/crud/notes_service.dart';
 import 'package:mynotes/utils/dialogs/logout_dialog.dart';
+import 'package:mynotes/views/notes/create_update_note_view.dart';
 import 'package:mynotes/views/notes/notes_list_view.dart';
 
 
@@ -22,24 +24,55 @@ enum MenuAction{ logout}
 
 class _NotesViewState extends State<NotesView> {
   late final FirebaseCloudStorage _notesService;
+  late final PageController _pageViewController;
   String get userId => AuthService.firebase().currentUser!.id;
+  bool _showAppbar = true;
+  bool isScrollingDown = false;
 
   @override
   void initState() {
     _notesService = FirebaseCloudStorage();
+    _pageViewController = PageController(initialPage: 0,keepPage: false);
+    _pageViewController.addListener(() {
+      if (_pageViewController.position.userScrollDirection ==
+          ScrollDirection.reverse || _pageViewController.page == 1) {
+          isScrollingDown = true;
+          _showAppbar = false;
+          setState(() {});
+        
+      }
+      // if (_pageViewController.page == 1){
+      //   _showAppbar = false;
+      //   setState(() {});
+      // }else{
+      //   _showAppbar = true;
+      //   setState(() {});
+      // }
+
+      if (_pageViewController.position.userScrollDirection ==
+          ScrollDirection.forward || _pageViewController.page == 0) {
+          isScrollingDown = false;
+          _showAppbar = true;
+          setState(() {});
+        
+      }
+    });
     // _notesService.open();
     super.initState();
   }
 
-  // @override
-  // void dispose() {
-  //   _notesService.close();
-  //   super.dispose();
-  // }
+  @override
+  void dispose() {
+    // _notesService.close();
+    _pageViewController.dispose();
+    _pageViewController.removeListener(() {});
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      backgroundColor: Colors.black,
+      appBar:_showAppbar? AppBar(
         title: const Text("Notes"),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
@@ -62,27 +95,33 @@ class _NotesViewState extends State<NotesView> {
             child: Text("Logout"))],
             )
         ],
-      ),
+      ):null,
       body: 
-      StreamBuilder(stream: _notesService.allNotes(ownerUserId: userId), 
-        builder:(context, snapshot) {
-          switch(snapshot.connectionState){  
-            case ConnectionState.waiting:
-            case ConnectionState.active: 
-              if (snapshot.hasData){
-                final allNotes = snapshot.data as Iterable<CloudNote>;
-                return NotesListView(notes: allNotes, onDeleteNote:(note) async{
-                  await _notesService.deleteNote(documentId: note.documentId);
-                }, onTap: (note) async{
-                  Navigator.of(context).pushNamed(createUpdateNoteRoute,arguments: note);
-                },);
-              }else{
+      PageView(
+        controller: _pageViewController,
+        children: [StreamBuilder(stream: _notesService.allNotes(ownerUserId: userId), 
+          builder:(context, snapshot) {
+            switch(snapshot.connectionState){  
+              case ConnectionState.waiting:
+              case ConnectionState.active: 
+                if (snapshot.hasData){
+                  final allNotes = snapshot.data as Iterable<CloudNote>;
+                  final validNotes = allNotes.where((note) => note.text!='');
+                  return NotesListView(notes: validNotes, onDeleteNote:(note) async{
+                    await _notesService.deleteNote(documentId: note.documentId);
+                  }, onTap: (note) async{
+                    Navigator.of(context).pushNamed(createUpdateNoteRoute,arguments: note);
+                  },);
+                }else{
+                  return const CircularProgressIndicator();
+                }
+              default:
                 return const CircularProgressIndicator();
-              }
-            default:
-              return const CircularProgressIndicator();
-          }
-        },
+            }
+          },
+        ),
+        const CreateUpdateNoteView()
+        ],
       )
     );
   }

@@ -35,7 +35,6 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   }
   
   Future<CloudNote> createOrGetExisitingNote(BuildContext context) async{
-    
     try{
     final widgetNote = context.getArgument<CloudNote>(); 
     if(widgetNote!=null){
@@ -64,7 +63,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   void _deleteNoteIfTextIsEmpty(){
     final note = _note;
-    if(_textController.text.isEmpty && note!=null){
+    if((_textController.text.isEmpty || note?.text=='') && note!=null){
       _notesService.deleteNote(documentId: note.documentId);
     }
   }
