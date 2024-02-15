@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mynotes/helpers/encryption/encryption.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/firebase_cloud_storage.dart';
@@ -39,7 +40,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
     final widgetNote = context.getArgument<CloudNote>(); 
     if(widgetNote!=null){
       _note = widgetNote;
-      _textController.text = widgetNote.text;
+      _textController.text = EncryptData.decryptAES(widgetNote.text);
       return widgetNote;
     }
     final existingNote = _note;

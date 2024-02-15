@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mynotes/helpers/encryption/encryption.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/services/cloud/cloud_storage_exceptions.dart';
+
 
 class FirebaseCloudStorage{
   static final  FirebaseCloudStorage _shared = FirebaseCloudStorage._sharedInstance();
@@ -25,8 +27,10 @@ class FirebaseCloudStorage{
 
   Future<void> updateNote({required String documentId, required String text}) async{
     try{
-      await notes.doc(documentId).update({'text':text,'date_time':DateTime.now()});
+      final encryptedText = EncryptData.encryptAES(text);
+      await notes.doc(documentId).update({'text':encryptedText,'date_time':DateTime.now()});
     }catch (e){
+      print('exception $e');
       throw CouldNotUpdateNoteException();
     }
   }

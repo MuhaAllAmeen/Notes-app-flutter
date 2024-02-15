@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mynotes/design/box/frosted_glass.dart';
+import 'package:mynotes/helpers/encryption/encryption.dart';
 import 'package:mynotes/services/cloud/cloud_note.dart';
 import 'package:mynotes/utils/dialogs/cannot_share_empty_note_dialog.dart';
 // import 'package:mynotes/services/crud/notes_service.dart';
@@ -23,6 +24,7 @@ class NotesGridView extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       itemBuilder:(context, index) {
         final note = notes.elementAt(index);
+        final decryptedNote = EncryptData.decryptAES(note.text);
         final formattedDate = '${note.dateTime.day}-${note.dateTime.month}-${note.dateTime.year}';
         final formattedTime ='${note.dateTime.hour}:${note.dateTime.minute}';
         return GestureDetector(
@@ -47,7 +49,7 @@ class NotesGridView extends StatelessWidget {
                     icon: const Icon(Icons.delete),
                   ),
                 trailing: IconButton(onPressed:() async {
-                  final text = note.text;
+                  final text = decryptedNote;
                   if (note==null || text.isEmpty){
                     await showCannotShareEmptyNoteDialog(context);
                   } else{
@@ -59,7 +61,7 @@ class NotesGridView extends StatelessWidget {
                 theHeight: 100.0,
                 theWidth: 100.0,
                 theChild: Text(
-                  note.text,
+                  decryptedNote,
                   maxLines: 3,
                   softWrap: true,
                   overflow: TextOverflow.ellipsis,

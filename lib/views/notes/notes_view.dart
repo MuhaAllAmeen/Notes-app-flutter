@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mynotes/constants/routes.dart';
+import 'package:mynotes/helpers/encryption/encryption.dart';
 import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
@@ -41,13 +42,6 @@ class _NotesViewState extends State<NotesView> {
           setState(() {});
         
       }
-      // if (_pageViewController.page == 1){
-      //   _showAppbar = false;
-      //   setState(() {});
-      // }else{
-      //   _showAppbar = true;
-      //   setState(() {});
-      // }
 
       if (_pageViewController.position.userScrollDirection ==
           ScrollDirection.forward || _pageViewController.page == 0) {
