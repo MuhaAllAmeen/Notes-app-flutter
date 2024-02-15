@@ -73,7 +73,14 @@ class _NotesViewState extends State<NotesView> {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar:_showAppbar? AppBar(
-        title: const Text("Notes"),
+        toolbarHeight: 90,
+        title: const Column(
+          crossAxisAlignment:CrossAxisAlignment.start,
+          children: [
+            Text("Your Notes",style: TextStyle(fontFamily: 'PlayfairDisplay',fontSize: 30),),
+            Text('Swipe left to add a new note or tap +',style: TextStyle(color: Colors.white30,fontSize: 15,fontFamily: 'Quicksand',fontWeight: FontWeight.bold),)
+          ],
+        ),
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         actions: [
@@ -99,7 +106,8 @@ class _NotesViewState extends State<NotesView> {
       body: 
       PageView(
         controller: _pageViewController,
-        children: [StreamBuilder(stream: _notesService.allNotes(ownerUserId: userId), 
+        children: [
+          StreamBuilder(stream: _notesService.allNotes(ownerUserId: userId), 
           builder:(context, snapshot) {
             switch(snapshot.connectionState){  
               case ConnectionState.waiting:
@@ -107,16 +115,28 @@ class _NotesViewState extends State<NotesView> {
                 if (snapshot.hasData){
                   final allNotes = snapshot.data as Iterable<CloudNote>;
                   final validNotes = allNotes.where((note) => note.text!='');
-                  return NotesListView(notes: validNotes, onDeleteNote:(note) async{
+                  final orderedNotes = validNotes.toList()..sort((b, a) => a.dateTime.compareTo(b.dateTime),);
+                  Iterable<CloudNote> orderedIterable = Iterable<CloudNote>.generate(orderedNotes.length,(index) => orderedNotes[index]);
+                  return NotesGridView(notes: orderedIterable, onDeleteNote:(note) async{
                     await _notesService.deleteNote(documentId: note.documentId);
                   }, onTap: (note) async{
                     Navigator.of(context).pushNamed(createUpdateNoteRoute,arguments: note);
                   },);
                 }else{
-                  return const CircularProgressIndicator();
+                  return const Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child:  CircularProgressIndicator()),
+                  );
                 }
               default:
-                return const CircularProgressIndicator();
+                return const Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child:  CircularProgressIndicator()),
+                  );
             }
           },
         ),

@@ -64,6 +64,15 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  fonts:
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay-Italic-VariableFont_wght.ttf
+        - asset: assets/fonts/PlayfairDisplay-VariableFont_wght.ttf
+    - family: Quicksand
+      fonts:
+        - asset: assets/fonts/Quicksand-VariableFont_wght.ttf
+          # style: italic
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

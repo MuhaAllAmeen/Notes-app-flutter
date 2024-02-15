@@ -53,8 +53,8 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text('Enter your email to', style: TextStyle(color: Colors.white30,fontSize: 30,)),
-                     Text('Reset your Password',style: TextStyle(color: Colors.white,fontSize: 45),)
+                     Text('Enter your email to', style: TextStyle(color: Colors.white30,fontSize: 30,fontFamily: 'PlayfairDisplay')),
+                     Text('Reset your Password',style: TextStyle(color: Colors.white,fontSize: 45,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.bold),)
                   ],
                 ),
               ),
@@ -82,10 +82,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             TextButton(onPressed:() {
                               final email = _controller.text;
                               context.read<AuthBloc>().add(AuthEventForgotPassword(email));
-                            }, child: const Text("Send Password Reset Link",style: TextStyle(color: Colors.white,fontSize: 20))),
+                            }, child: const Text("Send Password Reset Link",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold))),
                             TextButton(onPressed:() {
                               context.read<AuthBloc>().add(const AuthEventLogOut());
-                            }, child: const Text('Back to Login Page',style: TextStyle(color: Colors.white,fontSize: 20)))
+                            }, child: const Text('Back to Login Page',style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold)))
                           ],
                         ),
                       ),

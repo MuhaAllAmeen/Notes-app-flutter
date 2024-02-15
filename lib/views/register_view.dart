@@ -64,8 +64,8 @@ class _RegisterViewState extends State<RegisterView> {
                   child:  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Register to', style: TextStyle(color: Colors.white30,fontSize: 30,),),
-                      Text('Your Notes',style: TextStyle(color: Colors.white,fontSize: 45),)
+                      Text('Register to', style: TextStyle(color: Colors.white30,fontSize: 30,fontFamily: 'PlayfairDisplay'),),
+                      Text('Your Notes',style: TextStyle(color: Colors.white,fontSize: 45,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.bold),)
                     ],
                   ),
                 ),
@@ -113,12 +113,12 @@ class _RegisterViewState extends State<RegisterView> {
                               final password = _password.text;
                               context.read<AuthBloc>().add(AuthEventRegister(email, password));
                             },
-                            child: const Text("Register",style: TextStyle(color: Colors.white,fontSize: 20),)),
+                            child: const Text("Register",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold),)),
                       TextButton(
                       onPressed: () {
                         context.read<AuthBloc>().add(const AuthEventLogOut());
                       },
-                      child: const Text("Existing User? Login Here",style: TextStyle(color: Colors.white,fontSize: 20)))
+                      child: const Text("Existing User? Login Here",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold)))
                       ],
                     ),
                   ),

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mynotes/constants/routes.dart';
-import 'package:mynotes/services/auth/auth_service.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 
@@ -30,8 +28,8 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                   const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                       Text("A verification Email has been sent", style: TextStyle(color: Colors.white30,fontSize: 30,),),
-                       Text("Press the button \nto send the \nlink again",style: TextStyle(color: Colors.white,fontSize: 45)),
+                       Text("A verification Email has been sent", style: TextStyle(color: Colors.white30,fontSize: 30,fontFamily: 'PlayfairDisplay'),),
+                       Text("Press the button \nto send the \nlink again",style: TextStyle(color: Colors.white,fontSize: 45,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.bold)),
                     ],
                   ),
                   Padding(
@@ -42,10 +40,10 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
                           TextButton(onPressed: () async{
                             context.read<AuthBloc>().add(const AuthEventSendEmailVerification());
                           }, 
-                          child: const Text("Verify",style: TextStyle(color: Colors.white,fontSize: 20),)),
+                          child: const Text("Verify",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold),)),
                           TextButton(onPressed: () {
                             context.read<AuthBloc>().add(const AuthEventLogOut());
-                          }, child: const Text("Restart",style: TextStyle(color: Colors.white,fontSize: 20),))
+                          }, child: const Text("Restart",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold),))
                         ],
                       ),
                     ),

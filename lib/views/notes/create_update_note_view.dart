@@ -63,7 +63,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
 
   void _deleteNoteIfTextIsEmpty(){
     final note = _note;
-    if((_textController.text.isEmpty || note?.text=='') && note!=null){
+    if((_textController.text.isEmpty) && note!=null){
       _notesService.deleteNote(documentId: note.documentId);
     }
   }
@@ -91,6 +91,7 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text("New Note"),
         backgroundColor: Colors.black,
@@ -109,18 +110,38 @@ class _CreateUpdateNoteViewState extends State<CreateUpdateNoteView> {
          switch(snapshot.connectionState){      
            case ConnectionState.done:
            _setupTextControllerListener();
-           return TextField(
-            controller: _textController,
-            keyboardType: TextInputType.multiline,
-            maxLines: null,
-            decoration: const InputDecoration(
-              hintText: 'Start typing your note...'
-            ),
-           );
-           default:
-            return const CircularProgressIndicator();
-         }
-       },
+           return Padding(
+             padding: const EdgeInsets.all(25.0),
+             child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,        
+               children: [
+                  Text(_textController.text.isEmpty?'Create':'Edit',style: const TextStyle(color: Colors.white30,fontSize: 30,fontFamily: 'PlayfairDisplay'),),
+                  const Text('Your Note',style: TextStyle(color: Colors.white,fontSize: 45,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.bold),),
+                  const SizedBox(height: 50),
+                  Text(_textController.text.isNotEmpty?'Last Updated on: ${_note?.dateTime}':'',style: const TextStyle(color: Colors.white30),),
+                  SizedBox(height: _textController.text.isNotEmpty?30:0,),
+                  TextField(
+                    controller: _textController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      hintText: 'Start typing your note...',
+                      hintStyle: TextStyle(color: Colors.white70 )
+                    ),
+                  ),
+                ],
+              ),
+            );
+            default:
+              return const Center(
+                    child: SizedBox(
+                      width: 50,
+                      height: 50,
+                      child:  CircularProgressIndicator()),
+                  );
+          } 
+        },
       ),
     );
   }

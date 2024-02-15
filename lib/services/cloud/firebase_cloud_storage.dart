@@ -13,9 +13,10 @@ class FirebaseCloudStorage{
     final document = await notes.add({
       'user_id':ownerUserId,
       'text':'',
+      'date_time':DateTime.now()
     });
     final fetchedNote = await document.get();
-    return CloudNote(documentId: fetchedNote.id, ownerUserId: ownerUserId, text: '');
+    return CloudNote(documentId: fetchedNote.id, ownerUserId: ownerUserId, text: '',dateTime: DateTime.now());
   }
 
   Stream<Iterable<CloudNote>> allNotes({required String ownerUserId}) =>
@@ -24,7 +25,7 @@ class FirebaseCloudStorage{
 
   Future<void> updateNote({required String documentId, required String text}) async{
     try{
-      await notes.doc(documentId).update({'text':text});
+      await notes.doc(documentId).update({'text':text,'date_time':DateTime.now()});
     }catch (e){
       throw CouldNotUpdateNoteException();
     }

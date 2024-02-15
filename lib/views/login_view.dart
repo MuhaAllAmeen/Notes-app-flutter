@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mynotes/constants/routes.dart';
 import 'package:mynotes/design/box/frosted_glass.dart';
 import 'package:mynotes/services/auth/auth_exceptions.dart';
 import 'package:mynotes/services/auth/bloc/auth_bloc.dart';
 import 'package:mynotes/services/auth/bloc/auth_event.dart';
 import 'package:mynotes/services/auth/bloc/auth_state.dart';
 import 'package:mynotes/utils/dialogs/error_dialog.dart';
-import 'package:mynotes/utils/dialogs/loading_dialog.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -63,8 +61,8 @@ class _LoginViewState extends State<LoginView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Login to', style: TextStyle(color: Colors.white30,fontSize: 30,),),
-                      Text('Your Notes',style: TextStyle(color: Colors.white,fontSize: 45),),                  
+                      Text('Login to', style: TextStyle(color: Colors.white30,fontSize: 30,fontFamily: 'PlayfairDisplay'),),
+                      Text('Your Notes',style: TextStyle(color: Colors.white,fontSize: 45,fontFamily: 'PlayfairDisplay',fontWeight: FontWeight.bold),),                  
                     ],
                   ),
                 ),
@@ -114,17 +112,17 @@ class _LoginViewState extends State<LoginView> {
                                   .read<AuthBloc>()
                                   .add(AuthEventLogIn(email, password));
                             },
-                            child: const Text("Login",style: TextStyle(color: Colors.white,fontSize: 20),)),
+                            child: const Text("Login",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold),)),
                         TextButton(
                             onPressed: () {
                               context.read<AuthBloc>().add(const AuthEventShouldRegister());
                             },
-                            child: const Text("New User? Register Here",style: TextStyle(color: Colors.white,fontSize: 20))),
+                            child: const Text("New User? Register Here",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold))),
                         TextButton(
                             onPressed: () {
                               context.read<AuthBloc>().add(const AuthEventForgotPassword(null));
                             },
-                            child: const Text("Forgot Password",style: TextStyle(color: Colors.white,fontSize: 20)))
+                            child: const Text("Forgot Password",style: TextStyle(color: Colors.white,fontSize: 20,fontFamily: 'Quicksand',fontWeight: FontWeight.bold)))
                         ],
                       ),
                   ),
